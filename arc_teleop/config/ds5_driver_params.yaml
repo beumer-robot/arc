@@ -1,0 +1,6 @@
+ds5_driver:  # Node name
+  ros__parameters:
+    noderate: 60.0
+    deadzone: 0.05
+    joy_sub_topic: "joy/set_feedback"
+    joy_pub_topic: "joy"

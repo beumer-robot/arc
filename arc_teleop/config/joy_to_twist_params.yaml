@@ -1,0 +1,14 @@
+joy_to_twist:
+  ros__parameters:
+    linear_axis_forward: 5
+    linear_axis_backward: 4
+    angular_axis: 0
+    linear_button_forward: 13
+    linear_button_backward: 14
+    angular_button_left: 15
+    angular_button_right: 16
+    mode_switch_button: 2
+    control_mode: "axes"
+    default_scale: 1.0
+    slow_scale: 0.25
+    scale_switch_button: 3
