@@ -115,14 +115,14 @@ class MotorController : public ros2::Node {
         // subscribers
         const String diff_drive_topic = format_topic_path(motor_prefix, "target", "motor", "speed");
 
-        RCLCPP_INFO(this->get_logger(), "diff_drive_topic: " + green(diff_drive_topic));
+        RCLCPP_INFO(this->get_logger(), ("diff_drive_topic: " + green(diff_drive_topic)).c_str());
 
         diff_drive_sub_ = this->create_subscription<Float64Msg>(
             diff_drive_topic.c_str(), 10,
             [this](Float64Msg::UniquePtr msg) { this->target_ = this->get_target_value_(*msg); });
 
         const String state_topic = format_topic_path(motor_prefix, "sensors", "core");
-        RCLCPP_INFO(this->get_logger(), "state_topic: " + green(state_topic));
+        RCLCPP_INFO(this->get_logger(), ("state_topic: " + green(state_topic)).c_str());
 
         vesc_state_sub_ = this->create_subscription<VescStateStampedMsg>(
             state_topic.c_str(), 10, [this](VescStateStampedMsg::UniquePtr msg) {
@@ -133,11 +133,11 @@ class MotorController : public ros2::Node {
 
         // publishers
         const String motor_topic = format_topic_path(motor_prefix, "commands", "motor", "current");
-        RCLCPP_INFO(this->get_logger(), "motor_topic: " + green(motor_topic));
+        RCLCPP_INFO(this->get_logger(), ("motor_topic: " + green(motor_topic)).c_str());
         motor_pub_ = this->create_publisher<Float64Msg>(motor_topic, ros2::QoS(10).reliable());
 
         const String status_topic = format_topic_path(motor_prefix, "controller", "status");
-        RCLCPP_INFO(this->get_logger(), "status_topic: " + green(status_topic));
+        RCLCPP_INFO(this->get_logger(), ("status_topic: " + green(status_topic)).c_str());
         status_pub_ = this->create_publisher<MotorControllerStatusMsg>(status_topic,
                                                                        ros2::QoS(10).reliable());
 
