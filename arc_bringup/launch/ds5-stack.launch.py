@@ -70,12 +70,21 @@ def generate_launch_description():
         get_package_share_directory("arc_bringup"), "config", "params.yaml"
     )
 
-    # twist to diff drive
+    # twist to diff drive with log level set to debug
     twist_to_diff_drive = Node(
         package="arc_base",
         executable="twist_to_diff_drive_node",
         name="twist_to_diff_drive",
+        output="screen",
         parameters=[base_config],
+        arguments=[
+            "--ros-args",
+            "--log-level",
+            [
+                "twist_to_diff_drive:=",
+                "debug",
+            ],
+        ],
     )
 
     print(green("config: " + base_config))

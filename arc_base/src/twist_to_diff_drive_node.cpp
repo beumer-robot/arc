@@ -78,10 +78,11 @@ class TwistToDiffDriveNode : public rclcpp::Node {
 
         // controller rate in Hz
         controller_rate_ = declare_and_get_parameter<double>(*this, "controller_rate");
+        std::string twist_topic = declare_and_get_parameter<std::string>(*this, "twist_topic");
 
         // twist command subscriber
         twist_sub_ = this->create_subscription<TwistStampedMsg>(
-            "cmd_vel", 10, std::bind(&TwistToDiffDriveNode::twist_cb, this, _1));
+            twist_topic, 10, std::bind(&TwistToDiffDriveNode::twist_cb, this, _1));
 
         // motor target speed publishers
         motor_speed_left_pub_ = this->create_publisher<Float64Msg>("motor_right/target/motor/speed",
@@ -125,45 +126,26 @@ class TwistToDiffDriveNode : public rclcpp::Node {
     DifferentialDrive diff_drive_model_;
 
     void twist_cb(const TwistStampedMsg::SharedPtr msg) {
-        // RCLCPP_INFO(this->get_logger(), "Received twist:\ntwist.linear.x =
-        // %.5f\ntwist.angular.z = %.5f", msg->twist.linear.x,
-        // msg->twist.angular.z); Calculate the left and right wheel velocities
+        // RCLCPP_INFO(this->get_logger(), "Received twist message");
+        std::fprintf(stderr, "Received twist message");
+
         double x = msg->twist.linear.x;
         double z = msg->twist.angular.z;
-        auto wheel_relations = diff_drive_model_.calculate_wheel_relations(x, z);
-        // double left_motor = wheel_relations.first;
-        // double right_motor = wheel_relations.second;
-        // converting to wheel velocities
 
-        // RCLCPP_INFO(this->get_logger(), "\nwr_right: %0.5f\nwr_left: %0.5f",
-        // wheel_relations.first, wheel_relations.second);
+        // RCLCPP_INFO(this->get_logger(), "x: %0.5f, z: %0.5f", x, z);
+        std::fprintf(stderr, "x: %0.5f, z: %0.5f", x, z);
+
+        auto wheel_relations = diff_drive_model_.calculate_wheel_relations(x, z);
 
         auto wheel_velocities = diff_drive_model_.calculate_wheel_velocities(
             wheel_relations.first, wheel_relations.second);
-        // double left_motor = wheel_velocities.first;
-        // double right_motor = wheel_velocities.second;
         left_motor_speed_ = wheel_velocities.first;
         right_motor_speed_ = wheel_velocities.second;
 
-        // RCLCPP_INFO(this->get_logger(), "\nmotor_right: %0.5f\nmotor_left:
-        // %0.5f", left_motor, right_motor); Publish the left and right motor
-        // velocities
-        // auto diff_drive_msg = DiffDriveMsg();
-        // diff_drive_msg.left_motor = left_motor;
-        // diff_drive_msg.right_motor = right_motor;
-        // diff_drive_pub_->publish(diff_drive_msg);
-
-        // publish to the motor controllers
-        // {
-        //     auto left_motor_msg = Float64Msg();
-        //     left_motor_msg.data = left_motor;
-        //     motor_speed_left_pub_->publish(left_motor_msg);
-        // }
-        // {
-        //     auto right_motor_msg = Float64Msg();
-        //     right_motor_msg.data = right_motor;
-        //     motor_speed_right_pub_->publish(right_motor_msg);
-        // }
+        // RCLCPP_INFO(this->get_logger(), "left_motor_speed: %0.5f, right_motor_speed: %0.5f",
+                    //  left_motor_speed_, right_motor_speed_);
+        std::fprintf(stderr, "left_motor_speed: %0.5f, right_motor_speed: %0.5f", left_motor_speed_,
+                     right_motor_speed_);
     }
 
     bool publish_motor_speed(MotorSide motor, double speed) const {

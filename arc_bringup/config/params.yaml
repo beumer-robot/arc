@@ -40,6 +40,7 @@ twist_to_diff_drive:
   ros__parameters:
     controller_rate: 1000.0
     target_velocity: 5.0
+    twist_topic: "/cmd_vel"
 pos_controller:
   ros__parameters:
     controller_rate: 1000.0
